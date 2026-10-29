@@ -25,9 +25,10 @@ load_dotenv(Path(__file__).parent / ".env")
 API_KEY = os.getenv("NEBIUS_API_KEY", "").strip()
 BASE_URL = os.getenv("NEBIUS_BASE_URL", "https://api.tokenfactory.nebius.com/v1/")
 MODELS = {
-    "fast": os.getenv("MODEL_FAST", "").strip(),
-    "smart": os.getenv("MODEL_SMART", "").strip(),
-    "deep": os.getenv("MODEL_DEEP", "").strip(),
+    # Defaults are the Nemotron 3 models on Token Factory, so a deploy only needs the key.
+    "fast": os.getenv("MODEL_FAST", "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B").strip(),
+    "smart": os.getenv("MODEL_SMART", "nvidia/nemotron-3-super-120b-a12b").strip(),
+    "deep": os.getenv("MODEL_DEEP", "nvidia/Nemotron-3-Ultra-550b-a55b").strip(),
 }
 # If a tier is not configured, fall back to whichever one is.
 _any = next((m for m in MODELS.values() if m), "")

@@ -14,5 +14,9 @@ COPY backend/requirements.txt backend/
 RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY backend/ backend/
 COPY --from=web /app/frontend/dist frontend/dist
+# The database lives in /data (mount a volume there to keep it). Hosts like Hugging Face
+# run the container as a non-root user, so the folder must be writable by anyone.
+RUN mkdir -p /data && chmod 777 /data
+ENV VOX_DB=/data/vox.db
 ENV PORT=8000
 CMD ["sh", "-c", "cd backend && uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
