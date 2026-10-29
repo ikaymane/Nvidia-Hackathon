@@ -1,29 +1,16 @@
-# Render Blueprint: the whole app (React + FastAPI) as one Docker web service,
-# with a persistent disk so tasks, memory and meetings survive redeploys.
+# Render Blueprint: the whole app (React + FastAPI) as one Docker web service on the
+# free plan (no card needed). Free services have no disk, so tasks reset when the service
+# restarts, and they sleep after 15 idle minutes (the first visit then takes ~50 s).
 # Deploy: https://dashboard.render.com/blueprint/new?repo=https://github.com/ikaymane/Nvidia-Hackathon
 services:
   - type: web
     name: vox
     runtime: docker
-    plan: starter            # a persistent disk needs a paid plan
+    plan: free
     region: frankfurt        # closest Render region to Morocco
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/state
     autoDeploy: true         # every push to main redeploys
-    disk:
-      name: vox-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
-      - key: VOX_DB
-        value: /data/vox.db
       - key: NEBIUS_API_KEY
         sync: false          # Render asks for it once; it is never stored in the repo
-      - key: NEBIUS_BASE_URL
-        value: https://api.tokenfactory.nebius.com/v1/
-      - key: MODEL_FAST
-        value: nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B
-      - key: MODEL_SMART
-        value: nvidia/nemotron-3-super-120b-a12b
-      - key: MODEL_DEEP
-        value: nvidia/Nemotron-3-Ultra-550b-a55b
