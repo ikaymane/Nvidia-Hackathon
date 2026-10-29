@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-ink: #060608;
+  --color-panel: #0f1013;
+  --color-line: #1f2026;
+  --color-muted: #8b8d98;
+  --color-accent: #76b900; /* NVIDIA green */
+  --color-mind: #22d3ee; /* memory / AI thinking */
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-ink);
+  color: #ececf1;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ---------- animated background ---------- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.22;
+}
+.aurora::before {
+  background: #76b900;
+  top: -25vmax;
+  left: -15vmax;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+.aurora::after {
+  background: #0e7490;
+  bottom: -30vmax;
+  right: -20vmax;
+  animation: drift 28s ease-in-out infinite alternate-reverse;
+}
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%);
+}
+@keyframes drift {
+  to {
+    transform: translate(12vmax, 8vmax) scale(1.15);
+  }
+}
+
+/* ---------- glass panels ---------- */
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* moving dashes on memory graph links */
+.flow {
+  stroke-dasharray: 4 6;
+  animation: flow 1.6s linear infinite;
+}
+@keyframes flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora::before,
+  .aurora::after,
+  .flow {
+    animation: none;
+  }
+}
+
+/* ---------- map (Leaflet) ---------- */
+.dark-tiles {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.4);
+}
+.leaflet-container {
+  background: #0b0c0f;
+  font-family: var(--font-sans);
+}
+.nav-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #22d3ee;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.6);
+  animation: nav-pulse 1.8s ease-out infinite;
+}
+@keyframes nav-pulse {
+  to {
+    box-shadow: 0 0 0 18px rgba(34, 211, 238, 0);
+  }
+}
