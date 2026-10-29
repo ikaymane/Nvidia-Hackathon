@@ -33,15 +33,30 @@ const ROUTERS = {
 const NEXT_TURN_M = 30; // this close to a turn = we're on the next step
 const ARRIVED_M = 25;
 
-function myPosition() {
+// Your position. Laptops have no GPS: asking for high accuracy can time out, so we
+// fall back to normal (Wi-Fi based) accuracy. Returns { at } or { error }.
+function locate(options) {
   return new Promise((resolve) => {
-    if (!navigator.geolocation) return resolve(null);
     navigator.geolocation.getCurrentPosition(
-      (p) => resolve([p.coords.latitude, p.coords.longitude]),
-      () => resolve(null),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+      (p) => resolve({ at: [p.coords.latitude, p.coords.longitude] }),
+      (e) => resolve({ error: e }),
+      options
     );
   });
+}
+
+async function myPosition() {
+  if (!navigator.geolocation) return { error: "This browser can't share your location." };
+  let r = await locate({ enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 });
+  if (r.at || r.error.code === 1) return r.at ? r : { error: "Location is blocked for this site." };
+  r = await locate({ enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+  if (r.at) return r;
+  return {
+    error:
+      r.error.code === 2
+        ? "Your computer can't find its position. On Windows, turn on Settings → Privacy → Location."
+        : "Finding your position took too long.",
+  };
 }
 
 // Distance in meters between two [lat, lon] points.
@@ -117,6 +132,7 @@ function describe(step) {
   if (type === "depart") return `Head ${modifier || "out"}${step.name ? ` on ${step.name}` : ""}`;
   if (type === "arrive") return "You have arrived";
   if (type === "roundabout" || type === "rotary") return `At the roundabout, take exit ${step.maneuver.exit || 1}${road}`;
+  if (modifier === "uturn") return `Make a U-turn${road}`;
   if (modifier) return `${modifier === "straight" ? "Continue straight" : `Turn ${modifier}`}${road}`;
   return `Continue${road}`;
 }
@@ -140,7 +156,9 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
   const layers = useRef([]);
   const youMarker = useRef(null);
   const [mode, setMode] = useState("car");
-  const [status, setStatus] = useState("Finding the place…");
+  const [status, setStatus] = useState("Finding you…");
+  const [from, setFrom] = useState(""); // a typed start, when the browser can't locate you
+  const [fromDraft, setFromDraft] = useState("");
   const [info, setInfo] = useState(null);
   const announced = useRef(false);
 
@@ -173,8 +191,13 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
     let cancelled = false;
     (async () => {
       setInfo(null);
+      setStatus("Finding you…");
+      // A start you typed wins; otherwise the browser's position.
+      const typedStart = from ? await findPlace(from).catch(() => null) : null;
+      const located = typedStart ? { at: typedStart.at } : await myPosition();
+      const me = located.at || null;
+      if (cancelled) return;
       setStatus("Finding the place…");
-      const me = await myPosition();
       const dest = await findPlace(place, me).catch(() => null);
       if (cancelled) return;
       layers.current.forEach((l) => l.remove());
@@ -185,8 +208,10 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
       layers.current.push(pin.addTo(map.current));
       if (!me) {
         map.current.flyTo(dest.at, 14, { duration: 1.2 });
-        setInfo({ dest });
-        return setStatus("Location is off, so I can only show the place, not the way.");
+        setInfo({ dest, noStart: true });
+        return setStatus(
+          from ? `I couldn't find “${from}”.` : `${located.error} Or type where you are starting from below.`
+        );
       }
 
       youMarker.current?.remove();
@@ -216,7 +241,7 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
     return () => {
       cancelled = true;
     };
-  }, [place, mode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [place, mode, from]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---------- in-app navigation ----------
 
@@ -255,6 +280,7 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
 
   const startNav = (simulate) => {
     const { route, me } = info;
+    simulate = simulate || Boolean(from); // a typed start has no GPS to follow
     stepRef.current = 0;
     setStepIdx(0);
     setArrived(false);
@@ -446,6 +472,30 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
                 {status.endsWith("…") ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
                 {status}
               </p>
+            )}
+
+            {(info?.noStart || from) && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setFrom(fromDraft.trim());
+                }}
+                className="mt-3 flex gap-2"
+              >
+                <input
+                  value={fromDraft}
+                  onChange={(e) => setFromDraft(e.target.value)}
+                  placeholder="Start from… (e.g. Agdal, Rabat)"
+                  className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-accent/60"
+                />
+                <button
+                  type="submit"
+                  disabled={!fromDraft.trim()}
+                  className="cursor-pointer rounded-xl bg-accent px-3 text-sm font-semibold text-ink disabled:opacity-40"
+                >
+                  Go
+                </button>
+              </form>
             )}
 
             {info?.route && (
