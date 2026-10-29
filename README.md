@@ -1,68 +1,166 @@
-# Vox — talk to your tasks
+<div align="center">
 
-Vox is a voice-first personal task assistant. You don't fill in forms. You talk the way you'd
-talk to a human assistant, messy and out of order, and Vox turns it into an organized task list.
+# Vox
+
+### Talk to your day. Vox takes care of the rest.
+
+A voice-first personal assistant powered by **NVIDIA Nemotron 3** on **Nebius Token Factory**.<br>
+You talk like you would to a person, messy and out of order. Vox turns it into tasks, plans,
+meeting notes and directions.
+
+**Nebius x NVIDIA Global AI Hackathon** · Personal AI track
+
+[Live demo](#) · [Demo video](#) · [Run it locally](#run-it-locally)
+
+![Nemotron 3](https://img.shields.io/badge/NVIDIA-Nemotron%203-76B900?logo=nvidia&logoColor=white)
+![Nebius Token Factory](https://img.shields.io/badge/Nebius-Token%20Factory-1B1B1F)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue)
+
+</div>
+
+---
+
+## The idea
+
+To-do apps make you do the organizing: a form, a date picker, a dropdown for priority. Real life
+doesn't arrive that way. It arrives as one long sentence while you're walking to class:
 
 > "Ok so I need to finish the hackathon video by Friday, oh and call my mom this weekend, and the
 > dentist on Monday, no wait cancel that, and remind me to buy coffee."
 
-→ three tasks with real dates, and no dentist task, because you cancelled it mid-sentence.
+Vox hears that and creates **three tasks with real dates**. There is no dentist task, because you
+cancelled it halfway through the sentence.
 
-Built for the **Nebius x NVIDIA Global AI Hackathon** (Personal AI track).
+Then it keeps going with you through the day. It records a meeting and tells you what mattered. It
+reminds you before a task and asks afterwards whether you did it. When you have to be somewhere, it
+drives you there and keeps you company on the way.
 
-## What it does
+## What Vox can do
 
-- **Brain-dump:** one long sentence becomes many structured tasks (dates, times, priority, project).
-- **Fuzzy voice edits:** "move the video to Thursday and make it urgent", "delete the dentist thing",
-  "I already called mom". Vox finds tasks by meaning, not exact words.
-- **Safe by design:** deleting several tasks at once asks for a spoken or clicked "yes" first, and
-  every change can be undone.
-- **Memory:** "remember my mom is called Fatima" → later, "I called Fatima" checks off "Call mom".
-  Facts are stored in your own local database, and you can delete them.
-- **Planning:** "plan my exam revision, the exam is November 10" → a dated study plan.
-- **Meeting mode:** "record this meeting" → Vox transcribes the room for as long as you want.
-  Later, "summarize the meeting" → Nemotron Super returns the gist, key points, decisions and
-  action items, reads the gist aloud, and adds *your* action items as tasks in one click.
-- **Voice navigation, inside the app:** "take me to Rabat Ville" → a map pops up with the route.
-  "Start navigation" swoops down onto your position and follows you: a live turn banner, spoken
-  turn-by-turn directions, the remaining time, and an arrival call-out. "Demo drive" simulates the
-  trip so you can watch it all from a desk. Tasks with a place get a one-tap "show the way" link.
-- **Knows Morocco:** 45+ cities, train stations, airports and landmarks are built in, so "Fès" or
-  "Rabat Ville" resolve instantly. Common speech-to-text slips ("fess", "rabbit ville") are repaired
-  before the model sees them.
-- **A co-pilot to talk to:** while you drive, Vox goes hands-free and keeps you company. Nemotron
-  Nano opens the conversation, answers in about half a second, and brings up something new when
-  it's quiet. Task requests ("remind me to call Sara") still go to the task agent.
-- **Music for the road:** "play some music" starts a royalty-free road mix that quietens
-  whenever Vox talks or listens.
-- **Reminders that follow up:** for every task with a time, a notification 10 minutes before,
-  one at the time, and 15 minutes later: "Did you do it?". Tap it and answer by voice
-  ("yes", "not yet", or "I did half, move the rest to tomorrow"). Vox checks it off or replans.
-- **Focus mode:** "what should I do now?" → one task, picked by urgency, and a 25-minute timer.
-  Say "done" and the next one comes up.
-- **Spoken replies** and English / French / Arabic speech input.
+### 🧠 Understands messy speech
+- **Brain-dump.** One rambling sentence becomes many structured tasks, each with a date, time,
+  priority and project.
+- **Self-corrections.** "No wait", "actually", "cancel that": only the final intention counts.
+- **Fuzzy edits.** "Move the video to Thursday and make it urgent", "delete the dentist thing",
+  "I already called mom". Vox finds tasks by meaning, not by exact words.
+- **Follow-ups.** "Actually, make it Friday" knows what "it" is.
+- **Memory.** "Remember my mom is called Fatima." Later, "I called Fatima" checks off *Call mom*.
+- **Planning.** "Plan my exam revision, the exam is November 10" gives a dated study plan.
 
-## How NVIDIA Nemotron and Nebius Token Factory are used
+### 🎙️ Meeting mode
+- "Record this meeting" makes Vox transcribe the room for as long as you need: a class, a meeting,
+  a conversation.
+- "Summarize the meeting" gets you the gist, the key points, the decisions and the action items,
+  with who owns each one and when it's due. Vox reads the gist aloud.
+- One tap adds **your** action items to your tasks. Items other people own stay out.
 
-Every command goes to a Nemotron model on **Nebius Token Factory** (OpenAI-compatible API).
-Vox routes each request to the right model size, so it stays fast and cheap:
+### 🗺️ Navigation, inside the app
+- "Take me to Rabat Ville" opens a map with the route, the distance, the travel time and
+  turn-by-turn steps.
+- **Start navigation** swoops down onto your position and follows you. You get a live turn banner,
+  spoken directions at every turn, a countdown to arrival, and an arrival call-out.
+- **Demo drive** simulates the trip, so you can see it all from a desk.
+- Tasks that happen somewhere ("pick up the parcel at the post office in Agdal") get a
+  one-tap *show the way* link.
 
-| Tier | Model | Used for | Typical latency |
+### 🇲🇦 Knows Morocco
+- 45+ cities, train stations, airports and landmarks are built in. "Fès", "Casa Voyageurs" and
+  "Rabat Ville" resolve instantly, with no web search and no chance of landing in another country.
+- Speech-to-text often mangles Moroccan names. Vox repairs them before the model sees them:
+  *"fess"* becomes Fès, *"rabbit ville"* becomes Rabat Ville.
+
+### 🚗 A co-pilot for the road
+- While you drive, Vox goes hands-free and **talks with you**. It opens the conversation, reacts
+  to what you say, asks you things, and brings up something new when it's been quiet.
+- "Play some music" starts a royalty-free road mix that quietens whenever Vox speaks or listens.
+- Task requests ("remind me to call Sara tonight") still reach the task agent mid-drive.
+
+### ⏰ Reminders that follow up
+- For every task with a time: a notification 10 minutes before, one at the time, and one
+  15 minutes later asking **"Did you do it?"**
+- Answer by voice: "yes" checks it off, "not yet" keeps it, and "I did half, move the rest to
+  tomorrow" replans it.
+
+### 🎯 Focus mode
+- "What should I do now?" shows one task, picked by urgency, and a 25-minute timer.
+- Say "done" and the next task comes up.
+
+### 🛡️ Safe by design
+- Deleting several tasks at once waits for a spoken or clicked "yes".
+- **Every change can be undone** (Ctrl+Z or the undo button), memory included.
+- Your tasks and memory live in your own SQLite file. The microphone only opens while Vox is
+  listening.
+
+Plus: a morning **briefing** ("brief me"), spoken replies, English / French / Arabic speech
+input, hands-free mode, and a live activity log showing which model answered each request and how fast.
+
+## How NVIDIA Nemotron powers Vox
+
+Every request goes to a **Nemotron 3** model on **Nebius Token Factory** through its
+OpenAI-compatible API. Vox doesn't send everything to the biggest model. It **routes each request to
+the right size**, so everyday commands feel instant and hard ones get the brains they need.
+
+| Tier | Model | Handles | Typical latency |
 |---|---|---|---|
-| Fast | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` | Short everyday commands and questions | ~0.5 s |
-| Smart | `nvidia/nemotron-3-super-120b-a12b` | Long brain-dumps, multi-step edits; fallback when Nano returns nothing usable | ~1.5–5 s |
-| Deep | `nvidia/Nemotron-3-Ultra-550b-a55b` | Planning and breaking down goals | ~2–3 s |
+| ⚡ Fast | `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` | Everyday commands, questions, the briefing, co-pilot chat | ~0.5 s |
+| 🧠 Smart | `nvidia/nemotron-3-super-120b-a12b` | Long brain-dumps, multi-step edits, **meeting summaries**, fallback when Nano returns nothing usable | ~1.5–5 s |
+| 🔭 Deep | `nvidia/Nemotron-3-Ultra-550b-a55b` | Planning and breaking big goals into steps | ~2–3 s |
 
-Meeting summaries always go to Super: a long, messy transcript needs the bigger model to keep
-names, numbers and owners straight (~2 s for a short meeting).
+```mermaid
+flowchart LR
+    A["🎙️ Your voice<br/>(browser speech recognition)"] --> B["Name repair<br/>Moroccan places"]
+    B --> C{"Router<br/>pick_tier()"}
+    C -->|short command / question| N["Nemotron 3 Nano"]
+    C -->|long or multi-step| S["Nemotron 3 Super"]
+    C -->|plan / break down| U["Nemotron 3 Ultra"]
+    N -. nothing usable .-> S
+    N & S & U --> J["JSON action plan"]
+    J --> V["Validator<br/>ids exist? dates real?"]
+    V --> D[("SQLite<br/>tasks · memory · undo")]
+    V --> M["🗺️ Map / navigation"]
+    D --> R["🔊 Spoken reply"]
+```
 
-The routing lives in [`backend/agent.py`](backend/agent.py) (`pick_tier`). The model gets the user's
-words, their current tasks, their memory and a two-week calendar, and returns a JSON action plan.
-The backend validates every action before touching the database.
+The model receives your words, your current tasks, your memory and a two-week calendar. It returns a
+JSON list of actions (`add`, `update`, `complete`, `delete`, `remember`, `navigate`…). **The backend
+validates every action before anything touches the database.** The routing lives in
+[`backend/agent.py`](backend/agent.py) (`pick_tier`).
+
+### Design choices that made it reliable
+
+- **Code does the math, the model does the language.** The model can say `"due": "friday"`, and
+  Python turns that into the exact date. The morning briefing is computed in Python (overdue,
+  today, urgent), and Nano only phrases it. Small models are fast but bad at calendars, so we don't
+  ask them to do calendar math.
+- **Validate everything.** An action that points at a task that doesn't exist, or a date that isn't
+  real, is dropped before it can do damage. On an update, a bad date is removed rather than set
+  to empty, so a mistake can never erase a task's date.
+- **Escalate, don't fail.** If Nano returns nothing usable for a request that should change
+  something, the same request is retried on Super.
+- **Ask before destroying.** Bulk deletes wait for confirmation, and every change takes an undo
+  snapshot first.
+
+## Quality: tests and a live eval
+
+```bash
+cd backend
+python -m pytest -q     # 36 fast tests, no API calls
+python evals.py         # 10 real-world scenarios against the live Nemotron models
+```
+
+The **pytest suite** covers the safety rules, undo, date resolution, model routing and security
+(for example, the static file server can't be tricked into serving `backend/.env`).
+
+The **live eval** runs real requests through Nemotron and scores the resulting database state:
+brain-dumps with self-corrections, memory, rescheduling, follow-ups ("actually make it Thursday"),
+bulk deletes, French, planning and bulk completion. **Current result: 10/10** (last run
+October 29, 2026), with typical latencies of 0.4–0.8 s on Nano, ~2 s on Super and ~3.5 s on Ultra.
 
 ## Run it locally
 
-You need Python 3.11+, Node 20+, and Chrome or Edge (for speech recognition).
+You need **Python 3.11+**, **Node 20+**, and **Chrome or Edge** (for speech recognition).
 
 **1. Backend**
 
@@ -74,14 +172,14 @@ pip install -r requirements.txt
 copy .env.example .env          # macOS/Linux: cp .env.example .env
 ```
 
-Put your Token Factory key in `backend/.env` (`NEBIUS_API_KEY=...`). `python list_models.py`
-shows the model IDs your key can use. Without a key, Vox runs in a simple offline mode.
+Put your Token Factory key in `backend/.env` (`NEBIUS_API_KEY=...`). `python list_models.py` lists
+the model IDs your key can use. Without a key, Vox still runs in a simple offline mode.
 
 ```bash
 uvicorn main:app --reload --port 8000
 ```
 
-**2. Frontend** (in a second terminal)
+**2. Frontend** (second terminal)
 
 ```bash
 cd frontend
@@ -89,57 +187,79 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 and tap the mic (or hold space).
+Open **http://localhost:5173**, allow the microphone, and tap the orb (or hold Space).
 
-**Single-server mode:** run `npm run build` in `frontend/`, and the backend serves the app itself
-at http://localhost:8000.
+**One server instead of two:** run `npm run build` in `frontend/`, and the backend serves the
+whole app at http://localhost:8000.
 
-## Quality: tests and a live model eval
+**Docker:**
 
 ```bash
-cd backend
-python -m pytest -q     # 36 fast tests, no API calls (safety checks, undo, dates, routing, security)
-python evals.py         # 10 real-world scenarios against live Nemotron, scored automatically
+docker build -t vox .
+docker run -p 8000:8000 --env-file backend/.env vox
 ```
 
-The eval covers brain-dumps with self-corrections, memory, rescheduling, follow-ups
-("actually make it Thursday"), bulk deletes, French, planning and bulk completion. Current
-result: **10/10**.
+### Things to try
 
-Design choices that made it reliable:
+| Say | What happens |
+|---|---|
+| "Finish the report by Friday, call mom this weekend, and buy coffee" | Three dated tasks |
+| "Move the report to Monday and make it urgent" | Finds it by meaning and updates it |
+| "Remember my sister is called Sara" | Saved to memory, used later |
+| "Plan my exam revision, the exam is November 10" | A dated study plan from Nemotron Ultra |
+| "Record this meeting" … "summarize the meeting" | Transcript, then key points and action items |
+| "Take me to Rabat Ville" | Map, route and in-app navigation |
+| "Play some music" | Road mix, ducked under Vox's voice |
+| "What should I do now?" | Focus mode |
+| "Brief me" | Your day in one breath |
 
-- **Code does the math, the model does the language.** The model may answer `"due": "friday"`,
-  and Python turns that into the exact date. The morning briefing is computed in Python
-  (overdue, today, urgent), and Nano only phrases it. Small models are fast but bad at calendars.
-- **Every model action is validated** (does the task exist? is the date real?) before it touches the database.
-- **Escalation:** if Nano returns nothing usable for a request that should change something, the
-  same request is retried on Super.
+## Privacy
 
-Maps use free OpenStreetMap services (Photon for place search, OSRM for routes, OSM tiles), so no
-extra API key is needed. Your position is only sent to the routing service, and only when the
-map is open. Reminders work while the Vox tab is open (there is no push server).
+- Tasks, memory and meeting transcripts are stored in a local SQLite file you control. You can
+  delete any memory fact from the Memory tab.
+- Speech recognition runs in the browser. Only the recognized text is sent to the backend and to
+  Nemotron.
+- Maps use free OpenStreetMap services (Photon for place search, OSRM for routes, OSM tiles), so no
+  extra API key is needed. Your position is only sent to the routing service, and only while the
+  map is open.
+- Reminders work while the Vox tab is open. There is no push server.
 
 ## Project layout
 
 ```
 backend/
-  main.py         FastAPI routes
-  agent.py        Nemotron prompt, model routing, action validation
-  db.py           SQLite: tasks, memory, undo snapshots
-  list_models.py  lists available Nemotron models
-  evals.py        accuracy check against the live models
-  tests/          pytest suite
-frontend/
-  src/App.jsx              main screen
-  src/useSpeech.js         browser speech recognition + spoken replies
-  src/useMeeting.js        long-running meeting transcription
-  src/useReminders.js      before / at / after notifications + check-ins
-  src/components/          mic orb, task list, memory graph, meetings, map, focus mode
+  main.py          FastAPI routes (commands, confirm, undo, meetings, co-pilot chat)
+  agent.py         Nemotron prompts, model routing, action validation, meeting summaries
+  db.py            SQLite: tasks, memory, meetings, activity log, undo snapshots
+  evals.py         live accuracy check against the Nemotron models
+  list_models.py   lists the models your key can use
+  tests/           pytest suite
+frontend/src/
+  App.jsx                    main screen and voice command handling
+  useSpeech.js               speech recognition + spoken replies
+  useMeeting.js              long-running meeting transcription
+  useReminders.js            before / at / after notifications and check-ins
+  useMusic.js                road mix with voice ducking
+  morocco.js                 built-in Moroccan places and name repair
+  components/MapPanel.jsx    map, route and in-app navigation
+  components/                voice orb, tasks, meetings, memory graph, focus mode, activity
 ```
 
-## Stack
+## Built with
 
-React + Vite + Tailwind CSS + Framer Motion + Leaflet · FastAPI · SQLite · Nebius Token Factory · NVIDIA Nemotron 3
+**AI:** NVIDIA Nemotron 3 (Nano, Super, Ultra) · Nebius Token Factory<br>
+**Backend:** Python · FastAPI · SQLite · OpenAI-compatible SDK<br>
+**Frontend:** React · Vite · Tailwind CSS · Framer Motion · Leaflet · Web Speech API<br>
+**Maps:** OpenStreetMap · Photon · OSRM
+
+## Team
+
+Built in Morocco by:
+
+- **Aymane Idrissi Khamlichi**
+- **Yassine Belaidi**
+- **Nassime Gharib**
+- **Yahya Dadsi**
 
 ## License
 
