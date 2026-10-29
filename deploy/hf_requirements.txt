@@ -1,0 +1,6 @@
+# Installed by the Hugging Face Space next to Gradio, so versions are left open
+# to fit whatever Gradio pins.
+fastapi>=0.115
+uvicorn>=0.30
+openai>=1.59
+python-dotenv>=1.0
