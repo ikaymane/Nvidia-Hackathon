@@ -4,7 +4,7 @@
 
 <p align="center">
   <b>Nebius x NVIDIA Global AI Hackathon</b> · Personal AI track<br>
-  <a href="#">▶ Demo video</a> &nbsp;·&nbsp; <a href="https://vox-mu-teal.vercel.app">🌐 Live demo</a> &nbsp;·&nbsp; <a href="#-ok-how-do-i-run-you">💻 Run it</a>
+  <a href="https://www.youtube.com/watch?v=i7MA7YPNR0c">▶ Demo video</a> &nbsp;·&nbsp; <a href="https://vox-mu-teal.vercel.app">🌐 Live demo</a> &nbsp;·&nbsp; <a href="#-ok-how-do-i-run-you">💻 Run it</a>
 </p>
 
 <img src="assets/readme/divider.svg" width="100%" alt="">
