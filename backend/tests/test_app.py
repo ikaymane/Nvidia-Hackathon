@@ -191,3 +191,11 @@ def test_prompt_uses_the_users_clock():
     prompt = agent._system_prompt(datetime(2026, 12, 31, 23, 0))
     assert "Thursday 2026-12-31 (today)" in prompt
     assert "Friday 2027-01-01 (tomorrow)" in prompt
+
+
+def test_meeting_prompt_only_gets_facts_the_transcript_mentions():
+    db.remember("exam start", "November 10")
+    db.remember("user name", "Aymane")
+    memory = agent.memory_for_transcript("Aymane will record the demo video by Friday.")
+    assert "Aymane" in memory
+    assert "November" not in memory

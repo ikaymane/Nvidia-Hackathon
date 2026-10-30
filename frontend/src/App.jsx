@@ -458,7 +458,7 @@ export default function App() {
             onTrip={onTrip}
             onRoute={(r, mode) =>
               say(
-                `It's ${r.km.toFixed(1)} kilometers, about ${r.min} minutes ${mode === "car" ? "by car" : "on foot"}. ${r.steps[0] || ""}.`
+                `It's ${r.km.toFixed(1)} kilometers, about ${r.min} minutes ${mode === "car" ? "by car" : "on foot"}. ${r.steps[0]?.text || ""}.`
               )
             }
           />

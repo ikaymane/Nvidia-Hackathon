@@ -362,7 +362,7 @@ MEETING_PROMPT = """You are Vox. Below is a raw speech-to-text transcript of a m
 conversation the user recorded. It is messy: no speaker names, missing punctuation, misheard words.
 Today is {today}.
 
-Things you know about the user:
+Background about the user, only to recognize names and owners. Never list it in your answer:
 {memory}
 
 Answer with ONLY one JSON object, no other text:
@@ -377,6 +377,14 @@ Answer with ONLY one JSON object, no other text:
 Rules: use only what is in the transcript, never invent. Empty lists are fine. Keep every item short.
 "owner" is "me" when the user (the person recording) said they would do it or was asked to.
 Write in the language of the transcript."""
+
+
+def memory_for_transcript(transcript):
+    """Only the facts this transcript mentions, so the others can't leak into the summary."""
+    heard = set(re.findall(r"\w+", transcript.lower()))
+    facts = [m for m in db.list_memory()
+             if heard & {w for w in re.findall(r"\w+", str(m["value"]).lower()) if len(w) > 2}]
+    return "\n".join(f"- {m['key']}: {m['value']}" for m in facts) or "(nothing relevant)"
 
 
 def summarize_meeting(meeting_id, now=None):
@@ -394,7 +402,7 @@ def summarize_meeting(meeting_id, now=None):
     else:
         # A long transcript needs the bigger model to keep the details straight.
         model = MODELS["smart"]
-        memory = "\n".join(f"- {m['key']}: {m['value']}" for m in db.list_memory()) or "(nothing yet)"
+        memory = memory_for_transcript(meeting["transcript"])
         data = _parse_json(_chat(model, [
             {"role": "system", "content": MEETING_PROMPT.format(today=now.strftime("%A %Y-%m-%d"), memory=memory)},
             {"role": "user", "content": meeting["transcript"][:30000]},

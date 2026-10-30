@@ -177,7 +177,7 @@ That's a real exchange with Nemotron Nano: each reply took about half a second.
 
 ```bash
 cd backend
-python -m pytest -q   # 36 tests, no API calls: safety, undo, dates, routing, security
+python -m pytest -q   # 37 tests, no API calls: safety, undo, dates, routing, security
 python evals.py       # 10 real-world scenarios against the live Nemotron models
 ```
 
