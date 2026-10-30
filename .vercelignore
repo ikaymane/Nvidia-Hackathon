@@ -1,0 +1,13 @@
+.env
+**/.env
+*.db
+**/*.db
+.hf-build
+.venv
+**/__pycache__
+**/node_modules
+frontend/dist
+assets
+deploy
+notes
+backend/tests

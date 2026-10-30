@@ -4,7 +4,7 @@
 
 <p align="center">
   <b>Nebius x NVIDIA Global AI Hackathon</b> · Personal AI track<br>
-  <a href="#">▶ Demo video</a> &nbsp;·&nbsp; <a href="https://washday-cymbal-strict.ngrok-free.dev">🌐 Live demo</a> &nbsp;·&nbsp; <a href="#-ok-how-do-i-run-you">💻 Run it</a>
+  <a href="#">▶ Demo video</a> &nbsp;·&nbsp; <a href="https://vox-mu-teal.vercel.app">🌐 Live demo</a> &nbsp;·&nbsp; <a href="#-ok-how-do-i-run-you">💻 Run it</a>
 </p>
 
 <img src="assets/readme/divider.svg" width="100%" alt="">
