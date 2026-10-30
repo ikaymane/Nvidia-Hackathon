@@ -168,6 +168,7 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
   const [stepIdx, setStepIdx] = useState(0);
   const [left, setLeft] = useState(null); // { m, min }
   const [arrived, setArrived] = useState(false);
+  const [gpsError, setGpsError] = useState("");
   const stepRef = useRef(0);
   const stopFeed = useRef(() => {});
 
@@ -280,10 +281,10 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
 
   const startNav = (simulate) => {
     const { route, me } = info;
-    simulate = simulate || Boolean(from); // a typed start has no GPS to follow
     stepRef.current = 0;
     setStepIdx(0);
     setArrived(false);
+    setGpsError("");
     setDemo(simulate);
     setNav(true);
     // Let the panel grow to full screen, then swoop down onto your position.
@@ -312,9 +313,19 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
         clearInterval(timer);
       };
     } else {
+      let last = null;
       const id = navigator.geolocation.watchPosition(
-        (p) => onPositionRef.current([p.coords.latitude, p.coords.longitude]),
-        () => {},
+        (p) => {
+          const pos = [p.coords.latitude, p.coords.longitude];
+          const accuracy = p.coords.accuracy;
+          setGpsError("");
+          // GPS drifts even when you stand still. Only move the dot for a real change.
+          if (accuracy > 200) return;
+          if (last && meters(last, pos) < Math.min(30, Math.max(8, accuracy))) return;
+          last = pos;
+          onPositionRef.current(pos);
+        },
+        (e) => setGpsError(e.code === 1 ? "Location is blocked, so Vox can't follow you." : "Waiting for a GPS signal…"),
         { enableHighAccuracy: true, maximumAge: 2000 }
       );
       stopFeed.current = () => navigator.geolocation.clearWatch(id);
@@ -404,6 +415,7 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
                     {left ? fmt(left.m) : `${info.route.km.toFixed(1)} km`} · {place}
                     {demo && " · demo drive"}
                   </p>
+                  {gpsError && <p className="mt-0.5 text-xs text-rose-300">{gpsError}</p>}
                 </div>
 
                 <div className="flex items-center gap-1 rounded-full bg-white/5 py-1 pl-3 pr-1">
@@ -517,12 +529,18 @@ export default function MapPanel({ place, onClose, onRoute, say, music, onTrip }
                     </li>
                   ))}
                 </ol>
-                <button
-                  onClick={() => startNav(false)}
-                  className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-ink transition hover:brightness-110"
-                >
-                  <Navigation className="h-4 w-4" /> Start navigation
-                </button>
+                {from ? (
+                  <p className="mt-4 text-xs text-muted">
+                    Live navigation follows your real GPS position, so it needs location turned on, not a typed start.
+                  </p>
+                ) : (
+                  <button
+                    onClick={() => startNav(false)}
+                    className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-ink transition hover:brightness-110"
+                  >
+                    <Navigation className="h-4 w-4" /> Start navigation
+                  </button>
+                )}
                 <button
                   onClick={() => startNav(true)}
                   className="mt-2 cursor-pointer rounded-2xl border border-white/10 px-4 py-2 text-xs text-muted transition hover:text-white"

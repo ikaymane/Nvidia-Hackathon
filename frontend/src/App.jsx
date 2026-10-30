@@ -17,7 +17,7 @@ import {
   BellOff,
 } from "lucide-react";
 import { api } from "./api.js";
-import { useSpeech, speak } from "./useSpeech.js";
+import { useSpeech, speak, PHONE } from "./useSpeech.js";
 import { useMic } from "./useMic.js";
 import { useMeeting } from "./useMeeting.js";
 import { useMusic } from "./useMusic.js";
@@ -61,10 +61,11 @@ const BRIEFING =
   "Give me a short briefing of my day: anything overdue, what's due today, and the one thing I should focus on first.";
 
 // Show the intro once per browser session (add ?intro to the URL to see it again).
+// Phones skip it: an installed app should open straight to the mic.
 function shouldShowIntro() {
   try {
     if (new URLSearchParams(location.search).has("intro")) return true;
-    if (sessionStorage.getItem("vox-intro-seen")) return false;
+    if (PHONE || sessionStorage.getItem("vox-intro-seen")) return false;
     sessionStorage.setItem("vox-intro-seen", "1");
   } catch {
     /* storage blocked: just show it */
@@ -590,7 +591,9 @@ export default function App() {
                   <Cpu className="h-3 w-3" /> {meta.model} · {(meta.ms / 1000).toFixed(1)}s
                 </p>
               )}
-              {(error || mic.error) && <p className="mt-2 text-sm text-rose-400">{error || mic.error}</p>}
+              {(error || speech.error || mic.error) && (
+                <p className="mt-2 text-sm text-rose-400">{error || speech.error || mic.error}</p>
+              )}
 
               <AnimatePresence>
                 {pending && (

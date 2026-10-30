@@ -100,6 +100,28 @@ body {
   }
 }
 
+/* Phones: blur repainted every frame is what makes the screen stutter. Same look, no blur. */
+@media (pointer: coarse) {
+  .aurora::before,
+  .aurora::after {
+    animation: none;
+    filter: none;
+    mask-image: radial-gradient(closest-side, black, transparent);
+  }
+  .flow {
+    animation: none;
+  }
+  .glass,
+  [class*="backdrop-blur"] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .orb-glow {
+    filter: none;
+    mask-image: radial-gradient(closest-side, black, transparent);
+  }
+}
+
 /* ---------- map (Leaflet) ---------- */
 .dark-tiles {
   filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.4);

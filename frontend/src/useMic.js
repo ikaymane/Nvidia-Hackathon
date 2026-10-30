@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PHONE } from "./useSpeech.js";
 
 // Opens the microphone once and exposes live loudness data for the visualizer.
 // read() returns an array of 0-255 frequency values (or null before the mic is ready).
+// Phones skip this: holding the mic here leaves speech recognition hearing nothing.
 export function useMic(enabled) {
   const analyser = useRef(null);
   const data = useRef(null);
@@ -9,7 +11,7 @@ export function useMic(enabled) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!enabled || !navigator.mediaDevices) return;
+    if (!enabled || PHONE || !navigator.mediaDevices) return;
     let stream;
     let ctx;
     let cancelled = false;

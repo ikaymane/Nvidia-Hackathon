@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Mic, Square, Ear } from "lucide-react";
+import { PHONE } from "../useSpeech.js";
 
 const SIZE = 280;
 const BARS = 72;
@@ -15,7 +16,7 @@ export default function VoiceOrb({ mode, readMic, onClick, disabled }) {
 
   useEffect(() => {
     const c = canvas.current;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, PHONE ? 1.5 : 3); // fewer pixels to draw on phones
     c.width = SIZE * dpr;
     c.height = SIZE * dpr;
     const ctx = c.getContext("2d");
@@ -23,9 +24,15 @@ export default function VoiceOrb({ mode, readMic, onClick, disabled }) {
     const smooth = new Float32Array(BARS);
     let frame;
     let t = 0;
+    let skip = false;
 
     const draw = () => {
-      t += 0.016;
+      skip = PHONE && !skip; // phones draw every other frame
+      if (skip) {
+        frame = requestAnimationFrame(draw);
+        return;
+      }
+      t += PHONE ? 0.032 : 0.016;
       const m = modeRef.current;
       const freq = m === "hearing" || m === "armed" ? readMic() : null;
       ctx.clearRect(0, 0, SIZE, SIZE);
@@ -38,6 +45,7 @@ export default function VoiceOrb({ mode, readMic, onClick, disabled }) {
         const k = i < BARS / 2 ? i : BARS - i;
         let target;
         if (freq) target = (freq[Math.floor((k / (BARS / 2)) * freq.length * 0.7)] || 0) / 255;
+        else if (m === "hearing") target = 0.2 + 0.2 * Math.abs(Math.sin(t * 3 + k * 0.4)); // phones: no live volume
         else if (m === "thinking") target = 0.25 + 0.25 * Math.sin(t * 6 - i * 0.35);
         else if (m === "speaking") target = 0.2 + 0.3 * Math.abs(Math.sin(t * 4 + k * 0.5));
         else target = 0.06 + 0.04 * Math.sin(t * 1.5 + i * 0.25); // gentle breathing
@@ -75,7 +83,7 @@ export default function VoiceOrb({ mode, readMic, onClick, disabled }) {
     <div className="relative flex items-center justify-center" style={{ width: SIZE, height: SIZE }}>
       <div
         ref={glow}
-        className={`pointer-events-none absolute inset-6 rounded-full blur-3xl transition-colors duration-500 ${
+        className={`orb-glow pointer-events-none absolute inset-6 rounded-full blur-3xl transition-colors duration-500 ${
           busy ? "bg-cyan-400/30" : "bg-accent/35"
         }`}
       />
